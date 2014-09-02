@@ -1,0 +1,101 @@
+{
+    "agent": "Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Firefox/31.0", 
+    "context": {
+        "course_id": "edX/DemoX/Demo_Course", 
+        "course_user_tags": {}, 
+        "module": {
+            "display_name": "Multiple Choice Questions"
+        }, 
+        "org_id": "edX", 
+        "path": "/courses/edX/DemoX/Demo_Course/xblock/i4x:;_;_edX;_DemoX;_problem;_a0effb954cca4759994f1ac9e9434bf4/handler/xmodule_handler/problem_check", 
+        "user_id": 4
+    }, 
+    "event": {
+        "answers": {
+            "i4x-edX-DemoX-problem-a0effb954cca4759994f1ac9e9434bf4_2_1": "blue", 
+            "i4x-edX-DemoX-problem-a0effb954cca4759994f1ac9e9434bf4_3_1": "choice_2", 
+            "i4x-edX-DemoX-problem-a0effb954cca4759994f1ac9e9434bf4_4_1": [
+                "choice_0", 
+                "choice_2"
+            ]
+        }, 
+        "attempts": 1, 
+        "correct_map": {
+            "i4x-edX-DemoX-problem-a0effb954cca4759994f1ac9e9434bf4_2_1": {
+                "correctness": "correct", 
+                "hint": "", 
+                "hintmode": null, 
+                "msg": "", 
+                "npoints": null, 
+                "queuestate": null
+            }, 
+            "i4x-edX-DemoX-problem-a0effb954cca4759994f1ac9e9434bf4_3_1": {
+                "correctness": "correct", 
+                "hint": "", 
+                "hintmode": null, 
+                "msg": "", 
+                "npoints": null, 
+                "queuestate": null
+            }, 
+            "i4x-edX-DemoX-problem-a0effb954cca4759994f1ac9e9434bf4_4_1": {
+                "correctness": "correct", 
+                "hint": "", 
+                "hintmode": null, 
+                "msg": "", 
+                "npoints": null, 
+                "queuestate": null
+            }
+        }, 
+        "grade": 3, 
+        "max_grade": 3, 
+        "problem_id": "i4x://edX/DemoX/problem/a0effb954cca4759994f1ac9e9434bf4", 
+        "state": {
+            "correct_map": {}, 
+            "done": null, 
+            "input_state": {
+                "i4x-edX-DemoX-problem-a0effb954cca4759994f1ac9e9434bf4_2_1": {}, 
+                "i4x-edX-DemoX-problem-a0effb954cca4759994f1ac9e9434bf4_3_1": {}, 
+                "i4x-edX-DemoX-problem-a0effb954cca4759994f1ac9e9434bf4_4_1": {}
+            }, 
+            "seed": 1, 
+            "student_answers": {}
+        }, 
+        "submission": {
+            "i4x-edX-DemoX-problem-a0effb954cca4759994f1ac9e9434bf4_2_1": {
+                "answer": "blue", 
+                "correct": true, 
+                "input_type": "optioninput", 
+                "question": "", 
+                "response_type": "optionresponse", 
+                "variant": ""
+            }, 
+            "i4x-edX-DemoX-problem-a0effb954cca4759994f1ac9e9434bf4_3_1": {
+                "answer": "a chair", 
+                "correct": true, 
+                "input_type": "choicegroup", 
+                "question": "", 
+                "response_type": "multiplechoiceresponse", 
+                "variant": ""
+            }, 
+            "i4x-edX-DemoX-problem-a0effb954cca4759994f1ac9e9434bf4_4_1": {
+                "answer": [
+                    "a piano", 
+                    "a guitar"
+                ], 
+                "correct": true, 
+                "input_type": "checkboxgroup", 
+                "question": "", 
+                "response_type": "choiceresponse", 
+                "variant": ""
+            }
+        }, 
+        "success": "correct"
+    }, 
+    "event_source": "server", 
+    "event_type": "problem_check", 
+    "host": "edx.vergenz.info", 
+    "ip": "10.0.2.2", 
+    "page": "x_module", 
+    "time": "2014-09-02T20:47:01.733472+00:00", 
+    "username": "staff"
+}

@@ -6,6 +6,7 @@ class QueueManager:
 
 	def __init__(self):
 		self._cache = []
+		self.publish_timer = None
 
 	def push(self, stmt):
 
