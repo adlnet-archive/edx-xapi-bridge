@@ -1,4 +1,4 @@
-import os
+import os, json
 from pyinotify import WatchManager, Notifier, EventsCodes, ProcessEvent
 
 class TailHandler(ProcessEvent):
@@ -15,7 +15,10 @@ class TailHandler(ProcessEvent):
 		self.ifp.seek(0,2)
 
 	def process_IN_MODIFY(self,event):
-		print self.ifp.read()
+		buff = self.ifp.read()
+		evts = [json.loads(i) for i in buff.split('\n') if len(i) != 0]
+		for e in evts:
+			parser.convertAndPublish(e)
 
 
 def watch(watch_file):
