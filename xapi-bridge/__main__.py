@@ -1,4 +1,5 @@
-import sys, os, json
+import sys, os, json, requests
+from urlparse import urljoin
 from pyinotify import WatchManager, Notifier, EventsCodes, ProcessEvent
 import converter, settings
 
@@ -17,7 +18,12 @@ class QueueManager:
 			self.publish()
 
 	def publish(self):
-		pass
+
+		url = urljoin(settings.LRS_ENDPOINT, 'statements')
+		r = requests.post(url, data=json.dumps(self._cache),
+			auth=(settings.LRS_USERNAME, settings.LRS_PASSWORD),
+			headers={'X-Experience-API-Version':'1.0.1', 'Content-Type':'application/json'})
+		print r.text
 
 
 class TailHandler(ProcessEvent):
@@ -45,7 +51,9 @@ class TailHandler(ProcessEvent):
 				evtObj = json.loads(e)
 			except ValueError as err:
 				print 'Could not parse JSON for', e
+				continue
 
+			print evtObj
 			xapi = converter.to_xapi(evtObj)
 			if xapi != None:
 				self.publish_queue.push(xapi)

@@ -1,2 +1,5 @@
+argparse==1.2.1
+certifi==14.05.14
 pyinotify==0.9.4
+requests==2.4.0
 wsgiref==0.1.2

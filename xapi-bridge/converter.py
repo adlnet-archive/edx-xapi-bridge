@@ -1,14 +1,14 @@
+import json, re, xml.etree.ElementTree as ET
+
+pending_grades = {}
 
 def to_xapi(evt):
-
-	print '{time}: {event_type} by {username}'.format(**evt)
-	print evt
 
 	# set up common elements in statement
 	statement = {
 		'actor': {
 			'account': {
-				'homePage': evt['host'],
+				'homePage': 'http://'+evt['host'],
 				'name': evt['username']
 			},
 			'name': evt['username']
@@ -30,10 +30,24 @@ def to_xapi(evt):
 				}
 			},
 			'object': {
-				'type': 'Activity',
-				'id': evt['context']['problem_id']
+				'objectType': 'Activity',
+				'id': evt['event']['problem_id'],
+				'definition': {
+					'name': {'en-US': evt['context']['module']['display_name']}
+				}
+			},
+			'result': {
+				'score': {
+					'raw': evt['event']['grade'],
+					'min': 0,
+					'max': evt['event']['max_grade'],
+					'scaled': float(evt['event']['grade'])/evt['event']['max_grade']
+				},
+				'success': evt['event']['success'] == 'correct'
 			}
 		})
+		statement['context']['contextActivities'] = {'parent': [{'id':'i4x://'+evt['context']['course_id']}]}
+
 		return statement
 
 	else:
