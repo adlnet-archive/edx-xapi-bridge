@@ -11,6 +11,13 @@ class QueueManager:
 		self.publish_timer = None
 
 	def __del__(self):
+		self.destroy()
+	def __enter(self):
+		pass
+	def __exit__(self, type, value, tb):
+		self.destroy()
+		
+	def destroy(self):
 
 		print 'Destroying QueueManager'
 		if self.publish_timer != None:
@@ -58,7 +65,12 @@ class TailHandler(ProcessEvent):
 
 		self.publish_queue = QueueManager()
 
-
+	def __enter(self):
+		pass
+	def __exit__(self, type, value, tb):
+		print("Destroying TailHandler")
+		self.publish_queue.destroy()
+		
 	def process_IN_MODIFY(self,event):
 
 		buff = self.ifp.read()
@@ -84,17 +96,18 @@ def watch(watch_file):
 	
 	wm = WatchManager()
 
-	notifier = Notifier(wm, TailHandler(watch_file))
-	wdd = wm.add_watch(watch_file, TailHandler.MASK)
+	with TailHandler(watch_file) as th:
+		notifier = Notifier(wm, th)
+		wdd = wm.add_watch(watch_file, TailHandler.MASK)
 
-	while True:
-		try:
-			notifier.process_events()
-			if notifier.check_events():
-				notifier.read_events()
-		except KeyboardInterrupt:
-			notifier.stop()
-			break
+		while True:
+			try:
+				notifier.process_events()
+				if notifier.check_events():
+					notifier.read_events()
+			except KeyboardInterrupt:
+				notifier.stop()
+				break
 
 	print 'Loop broken'
 
