@@ -1,4 +1,4 @@
-import sys, os, json, requests
+import sys, os, json, requests, threading
 from urlparse import urljoin
 from pyinotify import WatchManager, Notifier, EventsCodes, ProcessEvent
 import converter, settings
@@ -6,24 +6,41 @@ import converter, settings
 class QueueManager:
 
 	def __init__(self):
-		self._cache = []
+		self.cache = []
+		self.cache_lock = threading.Lock()
 		self.publish_timer = None
+
+	def __del__(self):
+
+		print 'Destroying QueueManager'
+		if self.publish_timer != None:
+			self.publish_timer.cancel()
 
 	def push(self, stmt):
 
-		self._cache.append(stmt)
+		with self.cache_lock:
+			self.cache.append(stmt)
+
+		# publish if oldest statement reaches timeout
+		if len(self.cache) == 1 and settings.PUBLISH_MAX_WAIT_TIME > 0:
+			self.publish_timer = threading.Timer(settings.PUBLISH_MAX_WAIT_TIME, self.publish)
+			self.publish_timer.start()
 
 		# publish if statement threshold is reached
-		if settings.PUBLISH_MAX_PAYLOAD <= len(self._cache):
+		if settings.PUBLISH_MAX_PAYLOAD <= len(self.cache):
 			self.publish()
 
 	def publish(self):
 
-		url = urljoin(settings.LRS_ENDPOINT, 'statements')
-		r = requests.post(url, data=json.dumps(self._cache),
-			auth=(settings.LRS_USERNAME, settings.LRS_PASSWORD),
-			headers={'X-Experience-API-Version':'1.0.1', 'Content-Type':'application/json'})
-		print r.text
+		with self.cache_lock:
+			url = urljoin(settings.LRS_ENDPOINT, 'statements')
+			r = requests.post(url, data=json.dumps(self.cache),
+				auth=(settings.LRS_USERNAME, settings.LRS_PASSWORD),
+				headers={'X-Experience-API-Version':'1.0.1', 'Content-Type':'application/json'})
+
+			print r.text
+			self.cache = []
+			self.publish_timer.cancel()
 
 
 class TailHandler(ProcessEvent):
@@ -53,10 +70,10 @@ class TailHandler(ProcessEvent):
 				print 'Could not parse JSON for', e
 				continue
 
-			print evtObj
 			xapi = converter.to_xapi(evtObj)
 			if xapi != None:
 				self.publish_queue.push(xapi)
+				print '{} - {} {} {}'.format(xapi['timestamp'], xapi['actor']['name'], xapi['verb']['display']['en-US'], xapi['object']['definition']['name']['en-US'])
 				
 
 
@@ -78,6 +95,8 @@ def watch(watch_file):
 		except KeyboardInterrupt:
 			notifier.stop()
 			break
+
+	print 'Loop broken'
 
 
 if __name__ == '__main__':
