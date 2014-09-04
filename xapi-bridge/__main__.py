@@ -12,14 +12,9 @@ class QueueManager:
 
 	def __del__(self):
 		self.destroy()
-	def __enter__(self):
-		pass
-	def __exit__(self, type, value, tb):
-		self.destroy()
 		
 	def destroy(self):
 
-		print 'Destroying QueueManager'
 		if self.publish_timer != None:
 			self.publish_timer.cancel()
 
@@ -56,9 +51,6 @@ class TailHandler(ProcessEvent):
 
 	def __init__(self, filename):
 
-		# set up superclass
-		super(TailHandler, self).__init__()
-
 		# prepare file input stream
 		self.ifp = open(filename, 'r', 0)
 		self.ifp.seek(0,2)
@@ -66,9 +58,8 @@ class TailHandler(ProcessEvent):
 		self.publish_queue = QueueManager()
 
 	def __enter__(self):
-		pass
+		return self
 	def __exit__(self, type, value, tb):
-		print("Destroying TailHandler")
 		self.publish_queue.destroy()
 		
 	def process_IN_MODIFY(self,event):
@@ -97,22 +88,21 @@ def watch(watch_file):
 	wm = WatchManager()
 
 	with TailHandler(watch_file) as th:
+
 		notifier = Notifier(wm, th)
 		wdd = wm.add_watch(watch_file, TailHandler.MASK)
 
-		while True:
-			try:
-				notifier.process_events()
-				if notifier.check_events():
-					notifier.read_events()
-			except KeyboardInterrupt:
-				notifier.stop()
-				break
+		notifier.loop()
 
-	print 'Loop broken'
+		# flush queue before exiting
+		th.publish_queue.publish()
+
+
+	print 'Exiting'
 
 
 if __name__ == '__main__':
 
 	log_path = os.path.abspath(sys.argv[1]) if len(sys.argv) > 1 else '/edx/var/log/tracking.log'
+	print 'Watching file', log_path
 	watch(log_path)
