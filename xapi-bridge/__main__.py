@@ -12,7 +12,7 @@ class QueueManager:
 
 	def __del__(self):
 		self.destroy()
-	def __enter(self):
+	def __enter__(self):
 		pass
 	def __exit__(self, type, value, tb):
 		self.destroy()
@@ -65,7 +65,7 @@ class TailHandler(ProcessEvent):
 
 		self.publish_queue = QueueManager()
 
-	def __enter(self):
+	def __enter__(self):
 		pass
 	def __exit__(self, type, value, tb):
 		print("Destroying TailHandler")
