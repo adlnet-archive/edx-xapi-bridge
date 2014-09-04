@@ -42,7 +42,8 @@ class QueueManager:
 
 			print r.text
 			self.cache = []
-			self.publish_timer.cancel()
+			if self.publish_timer != None:
+				self.publish_timer.cancel()
 
 
 class TailHandler(ProcessEvent):
