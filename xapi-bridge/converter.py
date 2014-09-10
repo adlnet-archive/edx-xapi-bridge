@@ -50,5 +50,236 @@ def to_xapi(evt):
 
 		return statement
 
+	# event indicates a video was loaded
+	elif evt['event_type'] == 'load_video':
+
+		event = json.loads(evt['event']);
+
+		statement.update({
+			'verb': {
+				'id': 'http://adlnet.gov/expapi/verbs/launched',
+				'display': {
+					'en-US': 'Launched'
+				}
+			},
+			'object': {
+				'objectType': 'Activity',
+				'id': 'i4x://' + evt['context']['course_id'] + event['id'],
+				'definition': {
+					'name': {'en-US': "Loaded Video" }
+				}
+			}
+		})
+		statement['context']['contextActivities'] = {'parent': [{'id':'i4x://'+evt['context']['course_id']}]}
+
+		return statement
+
+	# event indicates a video was played
+	elif evt['event_type'] == 'play_video':
+
+		event = json.loads(evt['event']);
+
+		statement.update({
+			'verb': {
+				'id': 'http://adlnet.gov/expapi/verbs/progressed',
+				'display': {
+					'en-US': 'Progressed'
+				}
+			},
+			'object': {
+				'objectType': 'Activity',
+				'id': 'i4x://' + evt['context']['course_id'] + event['id'],
+				'definition': {
+					'name': {'en-US': "Played Video" }
+				}
+			},
+			'result': {
+				'extensions': {
+					'ext:currentTime': event['currentTime']
+				}
+			}
+		})
+		statement['context']['contextActivities'] = {'parent': [{'id':'i4x://'+evt['context']['course_id']}]}
+
+		return statement
+
+	# event indicates a video was paused
+	elif evt['event_type'] == 'pause_video':
+
+		event = json.loads(evt['event']);
+
+		statement.update({
+			'verb': {
+				'id': 'http://adlnet.gov/expapi/verbs/suspended',
+				'display': {
+					'en-US': 'Suspended'
+				}
+			},
+			'object': {
+				'objectType': 'Activity',
+				'id': 'i4x://' + evt['context']['course_id'] + event['id'],
+				'definition': {
+					'name': {'en-US': "Paused Video" }
+				}
+			},
+			'result': {
+				'extensions': {
+					'ext:currentTime': event['currentTime']
+				}
+			}
+		})
+		statement['context']['contextActivities'] = {'parent': [{'id':'i4x://'+evt['context']['course_id']}]}
+
+		return statement
+
+	# event indicates a video was stopped
+	elif evt['event_type'] == 'stop_video':
+
+		event = json.loads(evt['event']);
+
+		statement.update({
+			'verb': {
+				'id': 'http://adlnet.gov/expapi/verbs/suspended',
+				'display': {
+					'en-US': 'Suspended'
+				}
+			},
+			'object': {
+				'objectType': 'Activity',
+				'id': 'i4x://' + evt['context']['course_id'] + event['id'],
+				'definition': {
+					'name': {'en-US': "Stopped Video" }
+				}
+			},
+			'result': {
+				'extensions': {
+					'ext:currentTime': event['currentTime']
+				}
+			}
+		})
+		statement['context']['contextActivities'] = {'parent': [{'id':'i4x://'+evt['context']['course_id']}]}
+
+		return statement
+
+	# event indicates a video was seeked
+	elif evt['event_type'] == 'seek_video':
+
+		event = json.loads(evt['event']);
+
+		statement.update({
+			'verb': {
+				'id': 'http://adlnet.gov/expapi/verbs/interacted',
+				'display': {
+					'en-US': 'Interacted'
+				}
+			},
+			'object': {
+				'objectType': 'Activity',
+				'id': 'i4x://' + evt['context']['course_id'] + event['id'],
+				'definition': {
+					'name': {'en-US': "Video seek" }
+				}
+			},
+			'result': {
+				'extensions': {
+					'ext:old_time': event['old_time'],
+					'ext:new_time': event['new_time'],
+					'ext:type': event['type']
+				}
+			}
+		})
+		statement['context']['contextActivities'] = {'parent': [{'id':'i4x://'+evt['context']['course_id']}]}
+
+		return statement
+
+	# event indicates a video speed was changed
+	elif evt['event_type'] == 'speed_change_video':
+
+		event = json.loads(evt['event']);
+
+		statement.update({
+			'verb': {
+				'id': 'http://adlnet.gov/expapi/verbs/interacted',
+				'display': {
+					'en-US': 'Interacted'
+				}
+			},
+			'object': {
+				'objectType': 'Activity',
+				'id': 'i4x://' + evt['context']['course_id'] + event['id'],
+				'definition': {
+					'name': {'en-US': "Video speed change" }
+				}
+			},
+			'result': {
+				'extensions': {
+					'ext:currentTime': event['current_time'],
+					'ext:old_speed': event['old_speed'],
+					'ext:new_speed': event['new_speed'],
+				}
+			}
+		})
+		statement['context']['contextActivities'] = {'parent': [{'id':'i4x://'+evt['context']['course_id']}]}
+
+		return statement
+
+	# event indicates a video transcript was hidden
+	elif evt['event_type'] == 'hide_transcript':
+
+		event = json.loads(evt['event']);
+
+		statement.update({
+			'verb': {
+				'id': 'http://adlnet.gov/expapi/verbs/interacted',
+				'display': {
+					'en-US': 'Interacted'
+				}
+			},
+			'object': {
+				'objectType': 'Activity',
+				'id': 'i4x://' + evt['context']['course_id'] + event['id'],
+				'definition': {
+					'name': {'en-US': "Video transcript hidden" }
+				}
+			},
+			'result': {
+				'extensions': {
+					'ext:currentTime': event['currentTime']
+				}
+			}
+		})
+		statement['context']['contextActivities'] = {'parent': [{'id':'i4x://'+evt['context']['course_id']}]}
+
+		return statement
+
+	# event indicates a video transcript was shown
+	elif evt['event_type'] == 'show_transcript':
+
+		event = json.loads(evt['event']);
+
+		statement.update({
+			'verb': {
+				'id': 'http://adlnet.gov/expapi/verbs/interacted',
+				'display': {
+					'en-US': 'Interacted'
+				}
+			},
+			'object': {
+				'objectType': 'Activity',
+				'id': 'i4x://' + evt['context']['course_id'] + event['id'],
+				'definition': {
+					'name': {'en-US': "Video transcript shown" }
+				}
+			},
+			'result': {
+				'extensions': {
+					'ext:currentTime': event['currentTime']
+				}
+			}
+		})
+		statement['context']['contextActivities'] = {'parent': [{'id':'i4x://'+evt['context']['course_id']}]}
+
+		return statement
+
 	else:
 		return None
