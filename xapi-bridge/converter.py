@@ -14,8 +14,11 @@ def merge(d1,d2):
 
 		return final
 	
-	else:
+	elif d2 != None:
 		return d2
+	
+	else:
+		return d1
 
 def to_xapi(evt):
 
