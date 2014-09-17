@@ -330,6 +330,12 @@ def to_xapi(evt):
 		statement['context']['contextActivities'] = {'parent': [{'id':'i4x://'+evt['context']['course_id']}]}
 
 		return statement,
+		
+	# event indicates a complete button in the PRT has been clicked
+	if evt['event_type'] == 'prt_complete':
+
+		stmt = merge(statement, evt['event'])
+		return stmt,
 
 	else:
 		return ()
