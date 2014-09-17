@@ -76,8 +76,9 @@ class TailHandler(ProcessEvent):
 
 			xapi = converter.to_xapi(evtObj)
 			if xapi != None:
-				self.publish_queue.push(xapi)
-				print '{} - {} {} {}'.format(xapi['timestamp'], xapi['actor']['name'], xapi['verb']['display']['en-US'], xapi['object']['definition']['name']['en-US'])
+				for i in xapi:
+					self.publish_queue.push(i)
+					print '{} - {} {} {}'.format(i['timestamp'], i['actor']['name'], i['verb']['display']['en-US'], i['object']['definition']['name']['en-US'])
 				
 
 
