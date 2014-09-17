@@ -334,7 +334,7 @@ def to_xapi(evt):
 	# event indicates a complete button in the PRT has been clicked
 	if evt['event_type'] == 'prt_complete':
 
-		stmt = merge(statement, evt['event'])
+		stmt = merge(evt['event'], statement)
 		return stmt,
 
 	else:

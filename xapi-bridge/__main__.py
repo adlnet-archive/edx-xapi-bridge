@@ -53,7 +53,7 @@ class TailHandler(ProcessEvent):
 	def __init__(self, filename):
 
 		# prepare file input stream
-		self.ifp = open(filename, 'r', 0)
+		self.ifp = open(filename, 'r', 1)
 		self.ifp.seek(0,2)
 
 		self.publish_queue = QueueManager()
