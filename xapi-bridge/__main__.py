@@ -65,7 +65,7 @@ class TailHandler(ProcessEvent):
 		
 	def process_IN_MODIFY(self,event):
 
-		buff = self.ifp.read()
+		buff = self.ifp.readline()
 		evts = [i for i in buff.split('\n') if len(i) != 0]
 		for e in evts:
 			try:
