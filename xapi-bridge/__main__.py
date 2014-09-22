@@ -53,7 +53,7 @@ class TailHandler(ProcessEvent):
 	def __init__(self, filename):
 
 		# prepare file input stream
-		self.ifp = open(filename, 'r', 1)
+		self.ifp = open(filename, 'r', 2048)
 		self.ifp.seek(0,2)
 
 		self.publish_queue = QueueManager()
@@ -65,7 +65,7 @@ class TailHandler(ProcessEvent):
 		
 	def process_IN_MODIFY(self,event):
 
-		buff = self.ifp.readline()
+		buff = self.ifp.read(2048)
 		evts = [i for i in buff.split('\n') if len(i) != 0]
 		for e in evts:
 			try:
