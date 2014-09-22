@@ -70,6 +70,15 @@ def to_xapi(evt):
 			}
 		})
 
+		if 'i4x-ADL-WA_101-problem-e150ecbec170459b8f0f6aaacab41395_2_1' in evt['event']['answers']:
+
+			state = json.loads(evt['event']['answers']['i4x-ADL-WA_101-problem-e150ecbec170459b8f0f6aaacab41395_2_1'])
+			answer = json.loads(state['answer'])
+			
+			attempt = merge(attempt, {
+				'context': {'extensions': {'ext_id:nutrition': answer }}
+			})
+
 		pf = merge(statement, {
 			'verb': {
 				'id': 'http://adlnet.gov/expapi/verbs/passed' if evt['event']['success'] == 'correct' else 'http://adlnet.gov/expapi/verbs/failed',
