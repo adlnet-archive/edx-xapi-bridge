@@ -65,8 +65,9 @@ class TailHandler(ProcessEvent):
 		
 	def process_IN_MODIFY(self,event):
 
-		buff = ''
-		for line in self.ifp:
+		buff = line = self.ifp.read()
+		while line != '':
+			line = self.ifp.read()
 			buff += line
 			print len(line), '->', len(buff)
 
