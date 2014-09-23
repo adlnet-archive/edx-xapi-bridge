@@ -4,6 +4,9 @@ from pyinotify import WatchManager, Notifier, EventsCodes, ProcessEvent
 import converter, settings
 
 class QueueManager:
+	'''
+	Manages the batching and publishing of statements in a thread-safe way.
+	'''
 
 	def __init__(self):
 		self.cache = []
@@ -19,34 +22,45 @@ class QueueManager:
 			self.publish_timer.cancel()
 
 	def push(self, stmt):
+		'''Add a statement to the outgoing queue'''
 
+		# push statement to queue
 		with self.cache_lock:
 			self.cache.append(stmt)
 
-		# publish if oldest statement reaches timeout
+		# set timeout to publish statements
 		if len(self.cache) == 1 and settings.PUBLISH_MAX_WAIT_TIME > 0:
 			self.publish_timer = threading.Timer(settings.PUBLISH_MAX_WAIT_TIME, self.publish)
 			self.publish_timer.start()
 
-		# publish if statement threshold is reached
+		# publish immediately if statement threshold is reached
 		if settings.PUBLISH_MAX_PAYLOAD <= len(self.cache):
 			self.publish()
 
 	def publish(self):
+		'''Publish the queued statements to the LRS and clear the queue'''
 
+		# make sure no new statements are added while publishing
 		with self.cache_lock:
+
+			# push statements to the lrs
 			url = urljoin(settings.LRS_ENDPOINT, 'statements')
 			r = requests.post(url, data=json.dumps(self.cache),
 				auth=(settings.LRS_USERNAME, settings.LRS_PASSWORD),
 				headers={'X-Experience-API-Version':'1.0.1', 'Content-Type':'application/json'})
 
 			print r.text
+
+			# clear cache and cancel any pending publish timeouts
 			self.cache = []
 			if self.publish_timer != None:
 				self.publish_timer.cancel()
 
 
 class TailHandler(ProcessEvent):
+	'''
+	Parse incoming log events, convert to xapi, and add to publish queue
+	'''
 
 	MASK = EventsCodes.OP_FLAGS['IN_MODIFY']
 
@@ -65,10 +79,14 @@ class TailHandler(ProcessEvent):
 		self.publish_queue.destroy()
 		
 	def process_IN_MODIFY(self,event):
+		'''Handles any changes to the log file'''
 
+		# read all new contents from the end of the file
 		buff = self.raceBuffer + self.ifp.read()
 
-		if buff[-1] != '\n':
+		# if there's no newline at end of file, we probably read it before edx finished writing
+		# add read contents to a buffer and return
+		if len(buff) != 0 and buff[-1] != '\n':
 			self.raceBuffer = buff
 			
 		else:
