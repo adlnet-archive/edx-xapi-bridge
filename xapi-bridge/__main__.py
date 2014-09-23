@@ -57,6 +57,7 @@ class TailHandler(ProcessEvent):
 		self.ifp.seek(0,2)
 
 		self.publish_queue = QueueManager()
+		self.raceBuffer = ''
 
 	def __enter__(self):
 		return self
@@ -65,25 +66,28 @@ class TailHandler(ProcessEvent):
 		
 	def process_IN_MODIFY(self,event):
 
-		buff = line = self.ifp.read()
-		while line != '':
-			line = self.ifp.read()
-			buff += line
-			print len(line), '->', len(buff)
+		buff = self.raceBuffer + self.ifp.read()
 
-		evts = [i for i in buff.split('\n') if len(i) != 0]
-		for e in evts:
-			try:
-				evtObj = json.loads(e)
-			except ValueError as err:
-				print 'Could not parse JSON for', e
-				continue
+		if buff[-1] != '\n':
+			print 'Adding to race buffer'
+			self.raceBuffer = buff
+			
+		else:
+			print 'Parsing buffer'
+			self.raceBuffer = ''
+			evts = [i for i in buff.split('\n') if len(i) != 0]
+			for e in evts:
+				try:
+					evtObj = json.loads(e)
+				except ValueError as err:
+					print 'Could not parse JSON for', e
+					continue
 
-			xapi = converter.to_xapi(evtObj)
-			if xapi != None:
-				for i in xapi:
-					self.publish_queue.push(i)
-					print '{} - {} {} {}'.format(i['timestamp'], i['actor']['name'], i['verb']['display']['en-US'], i['object']['definition']['name']['en-US'])
+				xapi = converter.to_xapi(evtObj)
+				if xapi != None:
+					for i in xapi:
+						self.publish_queue.push(i)
+						print '{} - {} {} {}'.format(i['timestamp'], i['actor']['name'], i['verb']['display']['en-US'], i['object']['definition']['name']['en-US'])
 				
 
 
