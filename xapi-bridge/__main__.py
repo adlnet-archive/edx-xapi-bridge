@@ -69,11 +69,9 @@ class TailHandler(ProcessEvent):
 		buff = self.raceBuffer + self.ifp.read()
 
 		if buff[-1] != '\n':
-			print 'Adding to race buffer'
 			self.raceBuffer = buff
 			
 		else:
-			print 'Parsing buffer'
 			self.raceBuffer = ''
 			evts = [i for i in buff.split('\n') if len(i) != 0]
 			for e in evts:
