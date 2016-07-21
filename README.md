@@ -18,7 +18,7 @@ $
 
 ## Configuration
 
-Edit the file *xapi-bridge/settings.py* and change the properties to match your environment. There are several properties you will want to customize, and they are documented below.
+Rename the file *xapi-bridge/settings-dist.py* to *settings.py* and change the properties to match your environment. There are several properties you will want to customize, and they are documented below.
 
 * *PUBLISH_MAX_PAYLOAD* and *PUBLISH_MAX_WAIT_TIME*
 
