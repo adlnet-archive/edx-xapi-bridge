@@ -130,6 +130,6 @@ def watch(watch_file):
 
 if __name__ == '__main__':
 
-	log_path = os.path.abspath(sys.argv[1]) if len(sys.argv) > 1 else '/edx/var/log/tracking.log'
+	log_path = os.path.abspath(sys.argv[1]) if len(sys.argv) > 1 else '/edx/var/log/tracking/tracking.log'
 	print 'Watching file', log_path
 	watch(log_path)
